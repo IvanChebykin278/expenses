@@ -1,0 +1,75 @@
+{
+  "name": "expenses",
+  "version": "1.0.0",
+  "description": "Simple app to manage own expenses",
+  "repository": "<Add your repository here>",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@sap/cds": "^6",
+    "@sap/cds-odata-v2-adapter-proxy": "^1.9.16",
+    "express": "^4"
+  },
+  "devDependencies": {
+    "@sap/cds-dk": "^6.4.0",
+    "@sap/ux-specification": "^1.102.14",
+    "npm-run-all": "^4.1.5",
+    "sqlite3": "^5.0.4"
+  },
+  "scripts": {
+    "start": "cds run",
+    "watch": "npm-run-all --parallel watch:cds watch:mycredits watch:mydebts watch:myexpenses",
+    "watch:cds": "cds watch",
+    "watch:mycredits": "npm --prefix ./app/credits_processor run watch:ts",
+    "watch:mydebts": "npm --prefix ./app/debts_processor run watch:ts",
+    "watch:myexpenses": "npm --prefix ./app/expenses_processor run watch:ts",
+    "build": "npm-run-all build:cds build:mycredits build:mydebts build:myexpenses",
+    "build:cds": "npx -p @sap/cds-dk cds build --production",
+    "build:mycredits": "npm --prefix ./app/credits_processor run build",
+    "build:mydebts": "npm --prefix ./app/debts_processor run build",
+    "build:myexpenses": "npm --prefix ./app/expenses_processor run build"
+  },
+  "engines": {
+    "node": "^16.15"
+  },
+  "eslintConfig": {
+    "extends": "eslint:recommended",
+    "env": {
+      "es2020": true,
+      "node": true,
+      "jest": true,
+      "mocha": true
+    },
+    "globals": {
+      "SELECT": true,
+      "INSERT": true,
+      "UPDATE": true,
+      "DELETE": true,
+      "CREATE": true,
+      "DROP": true,
+      "CDL": true,
+      "CQL": true,
+      "CXL": true,
+      "cds": true
+    },
+    "rules": {
+      "no-console": "off",
+      "require-atomic-updates": "off"
+    }
+  },
+  "cds": {
+    "requires": {
+      "db": {
+        "kind": "sqlite",
+        "credentials": {
+          "database": "db.sqlite"
+        }
+      }
+    }
+  },
+  "sapux": [
+    "app/expenses_processor",
+    "app/debts_processor",
+    "app/credits_processor"
+  ]
+}

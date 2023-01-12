@@ -1,0 +1,159 @@
+{
+  "_version": "1.48.0",
+  "sap.app": {
+    "id": "expenses.app.mycredits",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:lrop",
+      "version": "1.8.4",
+      "toolsId": "ced6a55a-6852-46a3-bb1f-87bbe15c9476"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/service/Controller/",
+        "type": "OData",
+        "settings": {
+          "annotations": [
+            "annotation"
+          ],
+          "localUri": "localService/metadata.xml",
+          "odataVersion": "4.0"
+        }
+      },
+      "annotation": {
+        "type": "ODataAnnotation",
+        "uri": "annotations/annotation.xml",
+        "settings": {
+          "localUri": "annotations/annotation.xml"
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.109.3",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.ushell": {},
+        "sap.fe.templates": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "expenses.app.mycredits.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      },
+      "@i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "uri": "i18n/i18n.properties"
+      }
+    },
+    "resources": {
+      "css": []
+    },
+    "routing": {
+      "config": {},
+      "routes": [
+        {
+          "pattern": ":?query:",
+          "name": "CreditsList",
+          "target": "CreditsList"
+        },
+        {
+          "pattern": "Credits({key}):?query:",
+          "name": "CreditsObjectPage",
+          "target": "CreditsObjectPage"
+        }
+      ],
+      "targets": {
+        "CreditsList": {
+          "type": "Component",
+          "id": "CreditsList",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "entitySet": "Credits",
+              "variantManagement": "Page",
+              "navigation": {
+                "Credits": {
+                  "detail": {
+                    "route": "CreditsObjectPage"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "CreditsObjectPage": {
+          "type": "Component",
+          "id": "CreditsObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "editableHeaderContent": false,
+              "entitySet": "Credits",
+              "content": {
+                "header": {
+                  "actions": {
+                    "customHeaderActionShowAlert": {
+                      "press": "expenses.app.myexpenses.ext.ScanBarcodeAction.onScanBarcode",
+                      "visible": "{ui>/isEditable}",
+                      "icon": "sap-icon://accelerated",
+                      "enabled": "{ui>/isEditable}",
+                      "text": "Сканировать QR"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "sap.fiori": {
+    "registrationIds": [],
+    "archeType": "transactional"
+  }
+}

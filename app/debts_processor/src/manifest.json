@@ -1,0 +1,159 @@
+{
+  "_version": "1.48.0",
+  "sap.app": {
+    "id": "expenses.app.mydebts",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:lrop",
+      "version": "1.8.4",
+      "toolsId": "d6a3ba38-afa3-4042-9df5-77a63a857bf1"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/service/Controller/",
+        "type": "OData",
+        "settings": {
+          "annotations": [
+            "annotation"
+          ],
+          "localUri": "localService/metadata.xml",
+          "odataVersion": "4.0"
+        }
+      },
+      "annotation": {
+        "type": "ODataAnnotation",
+        "uri": "annotations/annotation.xml",
+        "settings": {
+          "localUri": "annotations/annotation.xml"
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.109.3",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.ushell": {},
+        "sap.fe.templates": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "expenses.app.mydebts.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      },
+      "@i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "uri": "i18n/i18n.properties"
+      }
+    },
+    "resources": {
+      "css": []
+    },
+    "routing": {
+      "config": {},
+      "routes": [
+        {
+          "pattern": ":?query:",
+          "name": "DebtsList",
+          "target": "DebtsList"
+        },
+        {
+          "pattern": "Debts({key}):?query:",
+          "name": "DebtsObjectPage",
+          "target": "DebtsObjectPage"
+        }
+      ],
+      "targets": {
+        "DebtsList": {
+          "type": "Component",
+          "id": "DebtsList",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "entitySet": "Debts",
+              "variantManagement": "Page",
+              "navigation": {
+                "Debts": {
+                  "detail": {
+                    "route": "DebtsObjectPage"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "DebtsObjectPage": {
+          "type": "Component",
+          "id": "DebtsObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "editableHeaderContent": false,
+              "entitySet": "Debts",
+              "content": {
+                "header": {
+                  "actions": {
+                    "customHeaderActionShowAlert": {
+                      "press": "expenses.app.mydebts.ext.ScanBarcodeAction.onScanBarcode",
+                      "visible": "{ui>/isEditable}",
+                      "icon": "sap-icon://accelerated",
+                      "enabled": "{ui>/isEditable}",
+                      "text": "Сканировать QR"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "sap.fiori": {
+    "registrationIds": [],
+    "archeType": "transactional"
+  }
+}

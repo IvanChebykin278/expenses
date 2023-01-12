@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Capabilities.V1.xml">
+        <edmx:Include Alias="Capabilities" Namespace="Org.OData.Capabilities.V1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+        <edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml">
+        <edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml">
+        <edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>
+    </edmx:Reference>
+    <edmx:DataServices>
+        <Schema Namespace="Controller" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+            <EntityContainer Name="EntityContainer">
+                <EntitySet Name="Users" EntityType="Controller.Users"/>
+                <EntitySet Name="Expenses" EntityType="Controller.Expenses">
+                    <NavigationPropertyBinding Path="currency" Target="Currencies"/>
+                    <NavigationPropertyBinding Path="category" Target="Categories"/>
+                    <NavigationPropertyBinding Path="type" Target="Types"/>
+                    <NavigationPropertyBinding Path="assigment" Target="UserExpense"/>
+                </EntitySet>
+                <EntitySet Name="Categories" EntityType="Controller.Categories">
+                    <NavigationPropertyBinding Path="texts" Target="Categories_texts"/>
+                    <NavigationPropertyBinding Path="localized" Target="Categories_texts"/>
+                </EntitySet>
+                <EntitySet Name="Types" EntityType="Controller.Types">
+                    <NavigationPropertyBinding Path="texts" Target="Types_texts"/>
+                    <NavigationPropertyBinding Path="localized" Target="Types_texts"/>
+                </EntitySet>
+                <EntitySet Name="Currencies" EntityType="Controller.Currencies">
+                    <NavigationPropertyBinding Path="texts" Target="Currencies_texts"/>
+                    <NavigationPropertyBinding Path="localized" Target="Currencies_texts"/>
+                </EntitySet>
+                <EntitySet Name="UserExpense" EntityType="Controller.UserExpense">
+                    <NavigationPropertyBinding Path="user" Target="Users"/>
+                    <NavigationPropertyBinding Path="expense" Target="Expenses"/>
+                </EntitySet>
+                <EntitySet Name="Categories_texts" EntityType="Controller.Categories_texts"/>
+                <EntitySet Name="Types_texts" EntityType="Controller.Types_texts"/>
+                <EntitySet Name="Currencies_texts" EntityType="Controller.Currencies_texts"/>
+            </EntityContainer>
+            <EntityType Name="Users">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" Nullable="false"/>
+                <Property Name="firstName" Type="Edm.String"/>
+                <Property Name="secondName" Type="Edm.String"/>
+                <Property Name="avatar" Type="Edm.Stream"/>
+                <Property Name="avatarType" Type="Edm.String"/>
+            </EntityType>
+            <EntityType Name="Expenses">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
+                <Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
+                <Property Name="cost" Type="Edm.Decimal" Nullable="false" Scale="variable"/>
+                <NavigationProperty Name="currency" Type="Controller.Currencies">
+                    <ReferentialConstraint Property="currency_code" ReferencedProperty="code"/>
+                </NavigationProperty>
+                <Property Name="currency_code" Type="Edm.String" MaxLength="3"/>
+                <Property Name="image" Type="Edm.Stream"/>
+                <Property Name="imageType" Type="Edm.String"/>
+                <Property Name="categoryId" Type="Edm.Int32" Nullable="false"/>
+                <NavigationProperty Name="category" Type="Controller.Categories">
+                    <ReferentialConstraint Property="categoryId" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="typeId" Type="Edm.Int32" Nullable="false"/>
+                <NavigationProperty Name="type" Type="Controller.Types">
+                    <ReferentialConstraint Property="typeId" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="assigment" Type="Collection(Controller.UserExpense)">
+                    <OnDelete Action="Cascade"/>
+                </NavigationProperty>
+            </EntityType>
+            <EntityType Name="Categories">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="name" Type="Edm.String" Nullable="false"/>
+                <Property Name="code" Type="Edm.String" Nullable="false"/>
+                <Property Name="icon" Type="Edm.String"/>
+                <NavigationProperty Name="texts" Type="Collection(Controller.Categories_texts)">
+                    <OnDelete Action="Cascade"/>
+                </NavigationProperty>
+                <NavigationProperty Name="localized" Type="Controller.Categories_texts">
+                    <ReferentialConstraint Property="ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+            </EntityType>
+            <EntityType Name="Types">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="code" Type="Edm.String" Nullable="false"/>
+                <Property Name="name" Type="Edm.String" Nullable="false"/>
+                <Property Name="icon" Type="Edm.String"/>
+                <NavigationProperty Name="texts" Type="Collection(Controller.Types_texts)">
+                    <OnDelete Action="Cascade"/>
+                </NavigationProperty>
+                <NavigationProperty Name="localized" Type="Controller.Types_texts">
+                    <ReferentialConstraint Property="ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+            </EntityType>
+            <EntityType Name="Currencies">
+                <Key>
+                    <PropertyRef Name="code"/>
+                </Key>
+                <Property Name="name" Type="Edm.String" MaxLength="255"/>
+                <Property Name="descr" Type="Edm.String" MaxLength="1000"/>
+                <Property Name="code" Type="Edm.String" MaxLength="3" Nullable="false"/>
+                <Property Name="symbol" Type="Edm.String" MaxLength="5"/>
+                <NavigationProperty Name="texts" Type="Collection(Controller.Currencies_texts)">
+                    <OnDelete Action="Cascade"/>
+                </NavigationProperty>
+                <NavigationProperty Name="localized" Type="Controller.Currencies_texts">
+                    <ReferentialConstraint Property="code" ReferencedProperty="code"/>
+                </NavigationProperty>
+            </EntityType>
+            <EntityType Name="UserExpense">
+                <Key>
+                    <PropertyRef Name="userId"/>
+                    <PropertyRef Name="expenseId"/>
+                </Key>
+                <Property Name="userId" Type="Edm.String" Nullable="false"/>
+                <Property Name="expenseId" Type="Edm.Guid" Nullable="false"/>
+                <NavigationProperty Name="user" Type="Controller.Users">
+                    <ReferentialConstraint Property="userId" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="expense" Type="Controller.Expenses">
+                    <ReferentialConstraint Property="expenseId" ReferencedProperty="ID"/>
+                </NavigationProperty>
+            </EntityType>
+            <EntityType Name="Categories_texts">
+                <Key>
+                    <PropertyRef Name="locale"/>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="locale" Type="Edm.String" MaxLength="14" Nullable="false"/>
+                <Property Name="ID" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="name" Type="Edm.String" Nullable="false"/>
+            </EntityType>
+            <EntityType Name="Types_texts">
+                <Key>
+                    <PropertyRef Name="locale"/>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="locale" Type="Edm.String" MaxLength="14" Nullable="false"/>
+                <Property Name="ID" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="name" Type="Edm.String" Nullable="false"/>
+            </EntityType>
+            <EntityType Name="Currencies_texts">
+                <Key>
+                    <PropertyRef Name="locale"/>
+                    <PropertyRef Name="code"/>
+                </Key>
+                <Property Name="locale" Type="Edm.String" MaxLength="14" Nullable="false"/>
+                <Property Name="name" Type="Edm.String" MaxLength="255"/>
+                <Property Name="descr" Type="Edm.String" MaxLength="1000"/>
+                <Property Name="code" Type="Edm.String" MaxLength="3" Nullable="false"/>
+            </EntityType>
+            <Annotations Target="Controller.Users/avatar">
+                <Annotation Term="Core.MediaType" Path="avatarType"/>
+            </Annotations>
+            <Annotations Target="Controller.Users/avatarType">
+                <Annotation Term="Core.IsMediaType" Bool="true"/>
+            </Annotations>
+            <Annotations Target="Controller.Expenses/createdAt">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="Core.Immutable" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Common.Label" String="{i18n>CreatedAt}"/>
+                </Annotations>
+                <Annotations Target="Controller.Expenses/createdBy">
+                    <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                    <Annotation Term="Core.Immutable" Bool="true"/>
+                    <Annotation Term="Core.Computed" Bool="true"/>
+                    <Annotation Term="Core.Description" String="{i18n>UserID.Description}"/>
+                        <Annotation Term="Common.Label" String="{i18n>CreatedBy}"/>
+                        </Annotations>
+                        <Annotations Target="Controller.Expenses/modifiedAt">
+                            <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                            <Annotation Term="Core.Computed" Bool="true"/>
+                            <Annotation Term="Common.Label" String="{i18n>ChangedAt}"/>
+                            </Annotations>
+                            <Annotations Target="Controller.Expenses/modifiedBy">
+                                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                                <Annotation Term="Core.Computed" Bool="true"/>
+                                <Annotation Term="Core.Description" String="{i18n>UserID.Description}"/>
+                                    <Annotation Term="Common.Label" String="{i18n>ChangedBy}"/>
+                                    </Annotations>
+                                    <Annotations Target="Controller.Expenses/currency">
+                                        <Annotation Term="Common.Label" String="{i18n>Currency}"/>
+                                            <Annotation Term="Core.Description" String="{i18n>CurrencyCode.Description}"/>
+                                            </Annotations>
+                                            <Annotations Target="Controller.Expenses/currency_code">
+                                                <Annotation Term="Common.Label" String="{i18n>Currency}"/>
+                                                    <Annotation Term="Common.ValueList">
+                                                        <Record Type="Common.ValueListType">
+                                                            <PropertyValue Property="Label" String="{i18n>Currency}"/>
+                                                                <PropertyValue Property="CollectionPath" String="Currencies"/>
+                                                                <PropertyValue Property="Parameters">
+                                                                    <Collection>
+                                                                        <Record Type="Common.ValueListParameterInOut">
+                                                                            <PropertyValue Property="LocalDataProperty" PropertyPath="currency_code"/>
+                                                                            <PropertyValue Property="ValueListProperty" String="code"/>
+                                                                        </Record>
+                                                                        <Record Type="Common.ValueListParameterDisplayOnly">
+                                                                            <PropertyValue Property="ValueListProperty" String="name"/>
+                                                                        </Record>
+                                                                    </Collection>
+                                                                </PropertyValue>
+                                                            </Record>
+                                                        </Annotation>
+                                                        <Annotation Term="Core.Description" String="{i18n>CurrencyCode.Description}"/>
+                                                        </Annotations>
+                                                        <Annotations Target="Controller.Expenses/image">
+                                                            <Annotation Term="Core.MediaType" Path="imageType"/>
+                                                        </Annotations>
+                                                        <Annotations Target="Controller.Expenses/imageType">
+                                                            <Annotation Term="Core.IsMediaType" Bool="true"/>
+                                                        </Annotations>
+                                                        <Annotations Target="Controller.EntityContainer/Categories">
+                                                            <Annotation Term="Capabilities.DeleteRestrictions">
+                                                                <Record Type="Capabilities.DeleteRestrictionsType">
+                                                                    <PropertyValue Property="Deletable" Bool="false"/>
+                                                                </Record>
+                                                            </Annotation>
+                                                            <Annotation Term="Capabilities.InsertRestrictions">
+                                                                <Record Type="Capabilities.InsertRestrictionsType">
+                                                                    <PropertyValue Property="Insertable" Bool="false"/>
+                                                                </Record>
+                                                            </Annotation>
+                                                            <Annotation Term="Capabilities.UpdateRestrictions">
+                                                                <Record Type="Capabilities.UpdateRestrictionsType">
+                                                                    <PropertyValue Property="Updatable" Bool="false"/>
+                                                                </Record>
+                                                            </Annotation>
+                                                        </Annotations>
+                                                        <Annotations Target="Controller.EntityContainer/Types">
+                                                            <Annotation Term="Capabilities.DeleteRestrictions">
+                                                                <Record Type="Capabilities.DeleteRestrictionsType">
+                                                                    <PropertyValue Property="Deletable" Bool="false"/>
+                                                                </Record>
+                                                            </Annotation>
+                                                            <Annotation Term="Capabilities.InsertRestrictions">
+                                                                <Record Type="Capabilities.InsertRestrictionsType">
+                                                                    <PropertyValue Property="Insertable" Bool="false"/>
+                                                                </Record>
+                                                            </Annotation>
+                                                            <Annotation Term="Capabilities.UpdateRestrictions">
+                                                                <Record Type="Capabilities.UpdateRestrictionsType">
+                                                                    <PropertyValue Property="Updatable" Bool="false"/>
+                                                                </Record>
+                                                            </Annotation>
+                                                        </Annotations>
+                                                        <Annotations Target="Controller.Currencies">
+                                                            <Annotation Term="UI.Identification">
+                                                                <Collection>
+                                                                    <Record Type="UI.DataField">
+                                                                        <PropertyValue Property="Value" Path="name"/>
+                                                                    </Record>
+                                                                </Collection>
+                                                            </Annotation>
+                                                        </Annotations>
+                                                        <Annotations Target="Controller.Currencies/name">
+                                                            <Annotation Term="Common.Label" String="{i18n>Name}"/>
+                                                            </Annotations>
+                                                            <Annotations Target="Controller.Currencies/descr">
+                                                                <Annotation Term="Common.Label" String="{i18n>Description}"/>
+                                                                </Annotations>
+                                                                <Annotations Target="Controller.Currencies/code">
+                                                                    <Annotation Term="Common.Text" Path="name"/>
+                                                                    <Annotation Term="Common.Label" String="{i18n>CurrencyCode}"/>
+                                                                    </Annotations>
+                                                                    <Annotations Target="Controller.Currencies/symbol">
+                                                                        <Annotation Term="Common.Label" String="{i18n>CurrencySymbol}"/>
+                                                                        </Annotations>
+                                                                        <Annotations Target="Controller.Categories_texts/locale">
+                                                                            <Annotation Term="Common.Label" String="{i18n>LanguageCode}"/>
+                                                                            </Annotations>
+                                                                            <Annotations Target="Controller.Types_texts/locale">
+                                                                                <Annotation Term="Common.Label" String="{i18n>LanguageCode}"/>
+                                                                                </Annotations>
+                                                                                <Annotations Target="Controller.Currencies_texts/locale">
+                                                                                    <Annotation Term="Common.Label" String="{i18n>LanguageCode}"/>
+                                                                                    </Annotations>
+                                                                                    <Annotations Target="Controller.Currencies_texts/name">
+                                                                                        <Annotation Term="Common.Label" String="{i18n>Name}"/>
+                                                                                        </Annotations>
+                                                                                        <Annotations Target="Controller.Currencies_texts/descr">
+                                                                                            <Annotation Term="Common.Label" String="{i18n>Description}"/>
+                                                                                            </Annotations>
+                                                                                            <Annotations Target="Controller.Currencies_texts/code">
+                                                                                                <Annotation Term="Common.Text" Path="name"/>
+                                                                                                <Annotation Term="Common.Label" String="{i18n>CurrencyCode}"/>
+                                                                                                </Annotations>
+                                                                                            </Schema>
+                                                                                        </edmx:DataServices>
+                                                                                    </edmx:Edmx>
